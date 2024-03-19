@@ -28,7 +28,7 @@ jobs:
       shell: bash
       run: |
         dotnet build --no-restore --configuration Release
-        7z a -tzip "/Kalkulator.zip" "/home/runner/work/kalkulator-projekt-programowanie-obiektowe-i-graficzne/kalkulator-projekt-programowanie-obiektowe-i-graficzne/Kalkulator/bin/Release/*"
+        7z a -tzip "Kalkulator.zip" "/home/runner/work/kalkulator-projekt-programowanie-obiektowe-i-graficzne/kalkulator-projekt-programowanie-obiektowe-i-graficzne/Kalkulator/bin/Release/*"
       
     - name: Release
       uses: softprops/action-gh-release@v2
