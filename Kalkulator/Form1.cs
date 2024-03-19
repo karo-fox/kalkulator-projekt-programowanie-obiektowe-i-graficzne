@@ -7,7 +7,9 @@ namespace Kalkulator
         private readonly string DECIMAL_SEPARATOR = Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator;
         private const int CHAR_LIMIT = 15;
         private const string DEFAULT_VALUE = "0";
-        private const string DIVISION_BY_ZERO_MSG = "Nie mo¿na dzieliæ przez 0";
+        private const string FORBIDDEN_OPERATION_MSG = "Operacja niedozwolona";
+        private readonly Color BTN_DISABLED = Color.White;
+        private (Button, Color)[] BUTTONS_TO_DISABLE;
 
         private double currentValue = 0.0;
         private double previousValue = 0.0;
@@ -16,15 +18,20 @@ namespace Kalkulator
         public Calculator()
         {
             InitializeComponent();
+            BUTTONS_TO_DISABLE = [(addBtn, SystemColors.ControlDarkDark), (subtractBtn, SystemColors.ControlDarkDark), (multiplyBtn, SystemColors.ControlDarkDark), (divideBtn, SystemColors.ControlDarkDark), (squareBtn, SystemColors.ControlDarkDark), (squareRootBtn, SystemColors.ControlDarkDark), (oneOverBtn, SystemColors.ControlDarkDark), (plusMinusBtn, SystemColors.ControlDarkDark), (separatorBtn, SystemColors.ControlDarkDark), (eraseLastBtn, SystemColors.ControlDarkDark), (equalsBtn, SystemColors.MenuHighlight),];
         }
 
         private void InsertDigit(object sender, EventArgs e)
         {
-            if (displayArea.Text.Length >= CHAR_LIMIT && displayArea.Text != DIVISION_BY_ZERO_MSG)
+            if (displayArea.Text == FORBIDDEN_OPERATION_MSG)
+            {
+                EnableBtns();
+            }
+            if (displayArea.Text.Length >= CHAR_LIMIT && displayArea.Text != FORBIDDEN_OPERATION_MSG)
             {
                 return;
             }
-            if (displayArea.Text == DEFAULT_VALUE || displayArea.Text == DIVISION_BY_ZERO_MSG)
+            if (displayArea.Text == DEFAULT_VALUE || displayArea.Text == FORBIDDEN_OPERATION_MSG)
             {
                 displayArea.Text = string.Empty;
             }
@@ -33,7 +40,7 @@ namespace Kalkulator
 
         private void InsertSeparator(object sender, EventArgs e)
         {
-            if (displayArea.Text.Contains(DECIMAL_SEPARATOR) || displayArea.Text == DIVISION_BY_ZERO_MSG)
+            if (displayArea.Text.Contains(DECIMAL_SEPARATOR))
             {
                 return;
             }
@@ -62,10 +69,6 @@ namespace Kalkulator
 
         private void EraseLastDigit(object sender, EventArgs e)
         {
-            if (displayArea.Text == DIVISION_BY_ZERO_MSG)
-            {
-                return;
-            }
             if (displayArea.Text.Length <= 1)
             {
                 displayArea.Text = DEFAULT_VALUE;
@@ -76,11 +79,6 @@ namespace Kalkulator
 
         private void ApplyOperation(Func<double, double, double>? operation, string symbol)
         {
-            if (displayArea.Text == DIVISION_BY_ZERO_MSG)
-            {
-                return;
-            }
-
             if (previousOperation == null)
             {
                 previousValue = double.Parse(displayArea.Text);
@@ -129,14 +127,9 @@ namespace Kalkulator
 
         private void Result(object sender, EventArgs e)
         {
-            if (displayArea.Text == DIVISION_BY_ZERO_MSG)
-            {
-                return;
-            }
-
             if (didDivide && double.Parse(displayArea.Text) == 0.0)
             {
-                DivisionByZero();
+                ForbiddenOperation();
                 return;
             }
 
@@ -147,7 +140,7 @@ namespace Kalkulator
 
         private void ChangeSign(object sender, EventArgs e)
         {
-            if (displayArea.Text == DEFAULT_VALUE || displayArea.Text == DIVISION_BY_ZERO_MSG)
+            if (displayArea.Text == DEFAULT_VALUE)
             {
                 return;
             }
@@ -158,27 +151,18 @@ namespace Kalkulator
 
         private void ApplyUnaryOperation(Func<double, double> operation, string symbol)
         {
-            if (displayArea.Text == DIVISION_BY_ZERO_MSG)
-            {
-                return;
-            }
-
             currentValue = double.Parse(displayArea.Text);
-            tempDisplayArea.Text = symbol + "(" + currentValue + ")";
-            currentValue = previousValue = operation(currentValue);
+            tempDisplayArea.Text += symbol + "(" + currentValue + ")";
+            previousValue = currentValue = previousOperation != null ? previousOperation(previousValue, operation(currentValue)) : operation(currentValue);
             displayArea.Text = currentValue.ToString();
+            previousOperation = null;
         }
 
         private void OneOver(object sender, EventArgs e)
         {
-            if (displayArea.Text == DIVISION_BY_ZERO_MSG)
-            {
-                return;
-            }
-
             if (double.Parse(displayArea.Text) == 0.0)
             {
-                DivisionByZero();
+                ForbiddenOperation();
                 return;
             }
 
@@ -192,12 +176,32 @@ namespace Kalkulator
 
         private void SquareRoot(object sender, EventArgs e)
         {
-            ApplyUnaryOperation((double a) => Math.Sqrt(a), "sqrt");
+            if (double.Parse(displayArea.Text) < 0.0)
+            {
+                ForbiddenOperation();
+                return;
+            }
+
+            ApplyUnaryOperation(Math.Sqrt, "sqrt");
         }
 
-        private void DivisionByZero()
+        private void ForbiddenOperation()
         {
-            displayArea.Text = DIVISION_BY_ZERO_MSG;
+            displayArea.Text = FORBIDDEN_OPERATION_MSG;
+            foreach ((Button btn, Color _) in BUTTONS_TO_DISABLE)
+            {
+                btn.BackColor = BTN_DISABLED;
+                btn.Enabled = false;
+            }
+        }
+
+        private void EnableBtns()
+        {
+            foreach ((Button btn, Color color) in BUTTONS_TO_DISABLE)
+            {
+                btn.Enabled = true;
+                btn.BackColor = color;
+            }
         }
     }
 }

@@ -50,7 +50,7 @@
             displayArea = new TextBox();
             squareRootBtn = new Button();
             squareBtn = new Button();
-            fractionBtn = new Button();
+            oneOverBtn = new Button();
             clearEntryBtn = new Button();
             tempDisplayArea = new TextBox();
             SuspendLayout();
@@ -317,17 +317,17 @@
             squareBtn.UseVisualStyleBackColor = false;
             squareBtn.Click += Square;
             // 
-            // fractionBtn
+            // oneOverBtn
             // 
-            fractionBtn.BackColor = SystemColors.ControlDarkDark;
-            fractionBtn.Font = new Font("Segoe UI", 16F);
-            fractionBtn.Location = new Point(11, 229);
-            fractionBtn.Name = "fractionBtn";
-            fractionBtn.Size = new Size(115, 77);
-            fractionBtn.TabIndex = 22;
-            fractionBtn.Text = "1/x";
-            fractionBtn.UseVisualStyleBackColor = false;
-            fractionBtn.Click += OneOver;
+            oneOverBtn.BackColor = SystemColors.ControlDarkDark;
+            oneOverBtn.Font = new Font("Segoe UI", 16F);
+            oneOverBtn.Location = new Point(11, 229);
+            oneOverBtn.Name = "oneOverBtn";
+            oneOverBtn.Size = new Size(115, 77);
+            oneOverBtn.TabIndex = 22;
+            oneOverBtn.Text = "1/x";
+            oneOverBtn.UseVisualStyleBackColor = false;
+            oneOverBtn.Click += OneOver;
             // 
             // clearEntryBtn
             // 
@@ -359,7 +359,7 @@
             Controls.Add(clearEntryBtn);
             Controls.Add(squareRootBtn);
             Controls.Add(squareBtn);
-            Controls.Add(fractionBtn);
+            Controls.Add(oneOverBtn);
             Controls.Add(displayArea);
             Controls.Add(divideBtn);
             Controls.Add(eraseLastBtn);
@@ -411,7 +411,7 @@
         private TextBox displayArea;
         private Button squareRootBtn;
         private Button squareBtn;
-        private Button fractionBtn;
+        private Button oneOverBtn;
         private Button clearEntryBtn;
         private TextBox tempDisplayArea;
     }
