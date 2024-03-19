@@ -29,12 +29,11 @@ jobs:
       run: |
         dotnet build --no-restore --configuration Release
         7z a -tzip "Kalkulator.zip" "/home/runner/work/kalkulator-projekt-programowanie-obiektowe-i-graficzne/kalkulator-projekt-programowanie-obiektowe-i-graficzne/Kalkulator/bin/Release/*"
-        tree .
       
     - name: Release
       uses: softprops/action-gh-release@v2
       with:
-        files: Kalkulator.zip
+        files: /Kalkulator.zip
 
                   
               
