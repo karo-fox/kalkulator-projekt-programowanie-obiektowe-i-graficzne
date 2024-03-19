@@ -6,6 +6,8 @@ name: .NET
 on:
   push:
     branches: [ "master" ]
+    tags:
+     - "v*.*"
   pull_request:
     branches: [ "master" ]
 
@@ -26,13 +28,12 @@ jobs:
       shell: bash
       run: |
         dotnet build --no-restore --configuration Release
-        7z a -tzip "Kalkulator.zip" "/home/runner/work/kalkulator-projekt-programowanie-obiektowe-i-graficzne/kalkulator-projekt-programowanie-obiektowe-i-graficzne/Kalkulator/bin/Release/*"
+        7z a -tzip "./Kalkulator.zip" "/home/runner/work/kalkulator-projekt-programowanie-obiektowe-i-graficzne/kalkulator-projekt-programowanie-obiektowe-i-graficzne/Kalkulator/bin/Release/*"
       
     - name: Release
       uses: softprops/action-gh-release@v2
-      if: startsWith(github.ref, 'refs/tags/')
       with:
-        files: Kalkulator.zip
+        files: ./Kalkulator.zip
 
                   
               
