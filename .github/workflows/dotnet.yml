@@ -23,12 +23,18 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore --configuration Release
+      shell: bash
+      run: |
+        tag=$(git describe --tags --abbrev=0)
+        release_name="Kalkulator-$tag-${{ matrix.target }}"
+        dotnet build --no-restore --configuration Release
+        7z a -tzip "${release_name}.zip" "./${release_name}/*"
+
+        rm -r "$release_name"
+      
     - name: Release
       uses: softprops/action-gh-release@v2
-      with:
-        files: |
-          /home/runner/work/kalkulator-projekt-programowanie-obiektowe-i-graficzne/kalkulator-projekt-programowanie-obiektowe-i-graficzne/Kalkulator/bin/Release/net8.0-windows/*
+      if: startsWith(github.ref, 'refs/tags/')
 
                   
               
